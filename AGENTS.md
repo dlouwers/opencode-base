@@ -8,10 +8,10 @@
 
 *Do not proceed until these steps are marked complete.*
 
-* [ ] **Create GitHub Repository:** Create a public empty repository (e.g., `vibebox-base`).
-* [ ] **Create DockerHub Account:** Ensure you have a valid account at [hub.docker.com](https://hub.docker.com).
-* [ ] **Generate Access Token:** Go to DockerHub Settings -> Security -> New Access Token (Read/Write/Delete permissions).
-* [ ] **Set GitHub Secrets:**
+* [x] **Create GitHub Repository:** Create a public empty repository (e.g., `vibebox-base`).
+* [x] **Create DockerHub Account:** Ensure you have a valid account at [hub.docker.com](https://hub.docker.com).
+* [x] **Generate Access Token:** Go to DockerHub Settings -> Security -> New Access Token (Read/Write/Delete permissions).
+* [x] **Set GitHub Secrets:**
 * Go to Repo Settings -> Secrets and variables -> Actions -> New Repository Secret.
 * `DOCKERHUB_USERNAME`: Your Docker ID.
 * `DOCKERHUB_TOKEN`: The Access Token you just generated.
@@ -88,11 +88,11 @@ Create a Dependabot configuration.
 
 *Review the Agent's work before merging.*
 
-* [ ] **Verify Files:** Check that `Dockerfile`, `vibebox.toml`, and `.github/` folders exist.
-* [ ] **Commit & Push:** Commit the changes to `main`.
-* [ ] **Verify Build:** Go to the "Actions" tab in GitHub and watch the pipeline run.
-* [ ] **Verify Registry:** Check DockerHub to confirm the image `vibebox-base:latest` is published.
-* [ ] **Verify Badges:** Check README.md badges show success (GitHub Actions badge may take 5-10 minutes to update due to caching).
+* [x] **Verify Files:** Check that `Dockerfile`, `vibebox.toml`, and `.github/` folders exist.
+* [x] **Commit & Push:** Commit the changes to `main`.
+* [x] **Verify Build:** Go to the "Actions" tab in GitHub and watch the pipeline run.
+* [x] **Verify Registry:** Check DockerHub to confirm the image `vibebox-base:latest` is published.
+* [x] **Verify Badges:** Check README.md badges show success (GitHub Actions badge may take 5-10 minutes to update due to caching).
 
 ---
 
@@ -120,3 +120,4 @@ Create a Dependabot configuration.
 * **Build fails with "image not found":** Check base image tag is valid at https://mcr.microsoft.com
 * **DockerHub push fails:** Verify `DOCKERHUB_TOKEN` secret is valid and has write permissions.
 * **Dependabot PRs fail:** Review logs to identify if base image or action version has breaking changes.
+* **Image pull fails on ARM64 (Apple Silicon):** The image is currently built for AMD64 only. Consider adding multi-arch build support in the future.
