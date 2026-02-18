@@ -92,3 +92,31 @@ Create a Dependabot configuration.
 * [ ] **Commit & Push:** Commit the changes to `main`.
 * [ ] **Verify Build:** Go to the "Actions" tab in GitHub and watch the pipeline run.
 * [ ] **Verify Registry:** Check DockerHub to confirm the image `vibebox-base:latest` is published.
+* [ ] **Verify Badges:** Check README.md badges show success (GitHub Actions badge may take 5-10 minutes to update due to caching).
+
+---
+
+## 🔄 Periodic Maintenance
+
+*Ongoing tasks to keep the image healthy and up-to-date.*
+
+### Weekly Checks
+
+* [ ] **Review Dependabot PRs:** Check for automated dependency update PRs and merge if tests pass.
+* [ ] **Verify Build Status:** Ensure latest workflow runs are succeeding at https://github.com/dlouwers/vibebox-base/actions
+* [ ] **Check Badge Status:** Verify README badges display correctly (green success indicators).
+* [ ] **Monitor DockerHub:** Confirm image tags are publishing correctly at https://hub.docker.com/r/dlouwers/vibebox-base
+
+### Monthly Checks
+
+* [ ] **Test Image Pull:** Run `docker pull dlouwers/vibebox-base:latest` and verify it works.
+* [ ] **Review Security:** Check for any security advisories on base image or dependencies.
+* [ ] **Validate Tools:** Test that `opencode-ai` and `vibebox` commands work inside the container.
+* [ ] **DockerHub Token:** Verify Personal Access Token hasn't expired (regenerate if needed).
+
+### When Issues Occur
+
+* **Badge shows failure but build succeeds:** Wait 10 minutes for GitHub cache to refresh.
+* **Build fails with "image not found":** Check base image tag is valid at https://mcr.microsoft.com
+* **DockerHub push fails:** Verify `DOCKERHUB_TOKEN` secret is valid and has write permissions.
+* **Dependabot PRs fail:** Review logs to identify if base image or action version has breaking changes.
