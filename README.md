@@ -84,6 +84,16 @@ Create a `.devcontainer/devcontainer.json` file in your project:
   "image": "dlouwers/vibebox-base:latest",
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind",
+  "forwardPorts": [3000],
+  "portsAttributes": {
+    "3000": {
+      "label": "Vibe Kanban",
+      "onAutoForward": "openBrowser"
+    }
+  },
+  "containerEnv": {
+    "PORT": "3000"
+  },
   "customizations": {
     "vscode": {
       "settings": {
@@ -222,9 +232,13 @@ See [`vibebox.toml`](./vibebox.toml) for the default configuration.
 # Navigate to your project directory
 cd /workspaces/my-project
 
-# Start Vibe Kanban (opens in browser automatically)
-npx vibe-kanban
+# Start Vibe Kanban (auto-confirms installation)
+npx --yes vibe-kanban
 ```
+
+**Or use the VSCode task:**
+- Press `F1` → "Tasks: Run Task" → "Start Vibe Kanban"
+- The web UI will open automatically at http://localhost:3000
 
 Vibe Kanban will:
 - Create git worktrees for task isolation

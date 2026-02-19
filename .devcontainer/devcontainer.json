@@ -7,17 +7,18 @@
   "portsAttributes": {
     "3000": {
       "label": "Vibe Kanban",
-      "onAutoForward": "notify"
+      "onAutoForward": "openBrowser"
     }
+  },
+  "containerEnv": {
+    "HOST": "0.0.0.0",
+    "PORT": "3000"
   },
   "customizations": {
     "vscode": {
       "settings": {
         "terminal.integrated.defaultProfile.linux": "bash"
-      },
-      "extensions": [
-        "bloopai.vibe-kanban"
-      ]
+      }
     }
   },
   "remoteUser": "vscode",
