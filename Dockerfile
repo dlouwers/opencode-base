@@ -21,7 +21,7 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Vibe tools globally
-RUN npm install -g opencode-ai vibebox
+RUN npm install -g opencode-ai vibebox oh-my-opencode
 
 # Create sandbox workspace with open permissions
 RUN mkdir -p /workspaces && chmod 777 /workspaces
@@ -32,5 +32,5 @@ COPY vibebox.toml /etc/vibebox.toml
 # Set working directory
 WORKDIR /workspaces
 
-# Default command
+# Default shell
 CMD ["/bin/bash"]

@@ -5,11 +5,30 @@
 
 Secure, reusable Docker base image for Vibe Coding agents. Provides isolated tooling and sandboxed execution environment.
 
+## Table of Contents
+
+- [Features](#features)
+- [Quick Start](#quick-start)
+- [Supported Architectures](#supported-architectures)
+- [Using with Dev Containers](#using-with-dev-containers)
+- [Security Configuration](#security-configuration)
+- [Using Additional Tools](#using-additional-tools)
+- [Development](#development)
+- [CI/CD Pipeline](#cicd-pipeline)
+- [Versioning](#versioning)
+- [Maintenance](#maintenance)
+- [License](#license)
+- [Contributing](#contributing)
+
 ## Features
 
 - **Multi-Architecture Support**: Native support for AMD64 (x86_64) and ARM64 (Apple Silicon, Raspberry Pi)
 - **Debian Bookworm Base**: Stable, slim foundation from Microsoft Dev Containers
-- **Pre-installed Tools**: `opencode-ai`, `vibebox`, Node.js, npm
+- **Pre-installed Tools**: 
+  - `opencode-ai`: Autonomous terminal-based AI coding agent
+  - `vibebox`: CLI for sandbox boundary management and security enforcement
+  - `oh-my-opencode`: OpenCode plugin harness for multi-agent orchestration
+  - Node.js & npm: Required runtime for agent tooling (not for language-specific development)
 - **Security First**: Strict isolation via `vibebox.toml` with blocked sensitive paths
 - **CI/CD Ready**: Automated builds and publishing via GitHub Actions
 - **Auto-updates**: Dependabot monitoring for base image and action updates
@@ -37,6 +56,9 @@ FROM dlouwers/vibebox-base:latest
 
 # Your custom agent setup here
 COPY ./agent-config /workspaces/config
+
+# Start the agent with your configuration
+CMD ["opencode-ai", "--config", "/workspaces/config/agent.json"]
 ```
 
 ## Supported Architectures
@@ -64,11 +86,6 @@ Create a `.devcontainer/devcontainer.json` file in your project:
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind",
   "customizations": {
     "vscode": {
-      "extensions": [
-        "ms-vscode.vscode-typescript-next",
-        "dbaeumer.vscode-eslint",
-        "esbenp.prettier-vscode"
-      ],
       "settings": {
         "terminal.integrated.defaultProfile.linux": "bash"
       }
@@ -154,12 +171,74 @@ Then in `.devcontainer/devcontainer.json`:
 
 ## Security Configuration
 
-The image includes `vibebox.toml` with strict isolation:
+The image includes `vibebox.toml` with strict isolation and runs as a non-root user (`vscode`) by default for enhanced security.
+
+### Default Security Settings
 
 - **Allowed Workspace**: `/workspaces` (read-write)
 - **Blocked Paths**: SSH keys, shell history, credentials, Docker socket
+- **User Context**: Runs as non-root user `vscode` (UID 1000)
 
-See [`vibebox.toml`](./vibebox.toml) for full configuration.
+### Customizing Security
+
+You can customize the security configuration by mounting your own `vibebox.toml`:
+
+```bash
+docker run -it --rm \
+  -v $(pwd):/workspaces \
+  -v $(pwd)/custom-vibebox.toml:/etc/vibebox.toml:ro \
+  dlouwers/vibebox-base:latest
+```
+
+**Example custom configuration** to whitelist additional directories:
+
+```toml
+[security]
+mode = "strict"
+
+[mounts]
+allowed = ["/workspaces", "/tmp/shared"]
+read_write = ["/workspaces"]
+
+[blocked_paths]
+paths = [
+    "/root/.ssh",
+    "/home/*/.ssh",
+    "/var/run/docker.sock"
+]
+```
+
+See [`vibebox.toml`](./vibebox.toml) for the default configuration.
+
+## Using Additional Tools
+
+### Vibe Kanban
+
+[Vibe Kanban](https://vibekanban.com) is a task management tool that integrates with your project. It's designed to run on-demand from within your workspace, not as a background service.
+
+**Usage from within the container:**
+
+```bash
+# Navigate to your project directory
+cd /workspaces/my-project
+
+# Start Vibe Kanban (opens in browser automatically)
+npx vibe-kanban
+```
+
+Vibe Kanban will:
+- Create git worktrees for task isolation
+- Launch a web UI (typically on port 3000)
+- Provide a Kanban board for task management
+
+**Port forwarding:** When using Dev Containers, VS Code/IntelliJ will automatically detect and forward port 3000. You can also manually forward ports:
+
+```bash
+# Docker run with port forwarding
+docker run -it --rm -p 3000:3000 -v $(pwd):/workspaces dlouwers/vibebox-base:latest
+```
+
+**Note:** Vibe Kanban requires user interaction to start and is intended for interactive development sessions, not as an always-on service.
 
 ## Development
 
