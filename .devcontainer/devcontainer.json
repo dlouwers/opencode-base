@@ -1,25 +1,26 @@
 {
-  "name": "OpenKanban Agent Workspace",
-  "build": {
-    "dockerfile": "Dockerfile"
-  },
-  "remoteUser": "node",
-  "initializeCommand": "mkdir -p ${localEnv:HOME}/.config/openkanban ${localEnv:HOME}/.config/opencode ${localEnv:HOME}/.local/share/opencode ${localEnv:HOME}/.local/state/opencode",
+  "name": "VibeBox",
+  "dockerFile": "Dockerfile",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  "initializeCommand": "bash .devcontainer/initialize-host.sh",
   "mounts": [
     "source=${localEnv:HOME}/.config/openkanban,target=/home/node/.config/openkanban,type=bind",
     "source=${localEnv:HOME}/.config/opencode,target=/home/node/.config/opencode,type=bind",
-    "source=${localEnv:HOME}/.local/share/opencode,target=/home/node/.local/share/opencode,type=bind",
-    "source=${localEnv:HOME}/.local/state/opencode,target=/home/node/.local/state/opencode,type=bind"
+    "source=${localEnv:HOME}/.kanban-worktrees,target=/worktrees,type=bind,consistency=cached"
   ],
   "postStartCommand": "bash .devcontainer/post-start.sh",
   "customizations": {
     "vscode": {
-      "settings": {
-        "terminal.integrated.defaultProfile.linux": "bash"
-      },
       "extensions": [
+        "dbaeumer.vscode-eslint",
         "fabiospampinato.vscode-terminals"
-      ]
+      ],
+      "settings": {
+        "terminal.integrated.defaultLocation": "editor",
+        // STOP VS Code from trying to restore dead terminals
+        "terminal.integrated.enablePersistentSessions": false,
+        "terminal.integrated.confirmOnExit": "never"
+      }
     }
   }
 }

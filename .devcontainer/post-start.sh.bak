@@ -1,0 +1,51 @@
+#!/bin/bash
+set -e 
+
+echo "==> Configuring OpenKanban..."
+if [ ! -f ~/.config/openkanban/config.json ]; then
+    mkdir -p ~/.config/openkanban
+    echo '{"agent": {"command": "opencode", "args": ["-y", "ulw"]}}' > ~/.config/openkanban/config.json
+fi
+
+echo "==> Configuring OhMyOpenCode..."
+if [ -f ~/.config/opencode/opencode.json ] && ! grep -q 'oh-my-opencode' ~/.config/opencode/opencode.json; then
+    oh-my-opencode install --no-tui --claude=no --openai=no --gemini=no --copilot=yes
+fi
+
+# Configuration
+export OPENCODE_PORT=4096
+MAX_ATTEMPTS=40
+ATTEMPT=0
+
+echo "==> Starting OpenCode engine in background..."
+# CRITICAL: Double-fork ensures the engine persists after this script ends
+(opencode serve --port $OPENCODE_PORT > /dev/null 2>&1 &)
+
+echo "==> Waiting for engine to stabilize (Port $OPENCODE_PORT)..."
+until curl -s http://localhost:$OPENCODE_PORT > /dev/null || [ $ATTEMPT -eq $MAX_ATTEMPTS ]; do
+  sleep 0.5
+  ATTEMPT=$((ATTEMPT + 1))
+done
+
+if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
+  echo "Error: OpenCode engine failed to start."
+  exit 1
+fi
+
+echo "==> Preparing Worktree Sandbox..."
+
+# 1. Ensure the mount point is writable
+# Since this is a bind mount to your Mac, 777 ensures the 'node' user 
+# can manage files regardless of host UID mismatches.
+sudo chmod 777 /worktrees
+
+# 2. Universal Git Trust
+# Using '*' is essential because persistent worktrees on a Mac mount 
+# often trigger Git's 'dubious ownership' security blocks.
+git config --global --add safe.directory '*'
+
+# 3. Persistent Worktree Location
+# This tells openkanban to always look in the mounted Mac folder.
+export OPENKANBAN_WORKTREE_DIR="/worktrees"
+
+echo "==> Setup Complete! Engine ready after $((ATTEMPT / 2)) seconds."
