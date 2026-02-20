@@ -1,36 +1,35 @@
-# VibeBox Base Image
-# Secure foundation for Vibe Coding agents
+FROM mcr.microsoft.com/devcontainers/javascript-node:20
 
-FROM mcr.microsoft.com/devcontainers/base:1-bookworm
-
-# OCI Labels
 LABEL org.opencontainers.image.source="https://github.com/dlouwers/vibebox-base"
-LABEL org.opencontainers.image.description="Secure base image for Vibe Coding agents with isolated tooling"
+LABEL org.opencontainers.image.description="Secure devcontainer for Vibe Coding agents"
 LABEL org.opencontainers.image.licenses="MIT"
 
-# Install system dependencies
-RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-    && apt-get install -y --no-install-recommends \
-        nodejs \
-        npm \
-        build-essential \
-        ca-certificates \
-        curl \
-        git \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+ARG TARGETARCH
+ARG OPENKANBAN_VERSION=0.1.0
 
-# Install Vibe tools globally
-RUN npm install -g opencode-ai vibebox oh-my-opencode
+RUN apt-get update && apt-get install -y tar \
+    && if [ "$TARGETARCH" = "arm64" ]; then \
+         ARCH="arm64"; \
+       else \
+         ARCH="amd64"; \
+       fi \
+    && curl -fSL -o openkanban.tar.gz "https://github.com/TechDufus/openkanban/releases/download/v${OPENKANBAN_VERSION}/openkanban_${OPENKANBAN_VERSION}_linux_${ARCH}.tar.gz" \
+    && tar -xzf openkanban.tar.gz -C /usr/local/bin/ openkanban \
+    && chmod +x /usr/local/bin/openkanban \
+    && rm openkanban.tar.gz \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Create sandbox workspace with open permissions
-RUN mkdir -p /workspaces && chmod 777 /workspaces
+RUN npm install -g oh-my-opencode
 
-# Copy security configuration
-COPY vibebox.toml /etc/vibebox.toml
+USER node
+RUN curl -fsSL https://opencode.ai/install | bash
 
-# Set working directory
-WORKDIR /workspaces
+USER root
+RUN echo 'export PATH=/home/node/.opencode/bin:$PATH' > /etc/profile.d/opencode.sh \
+    && chmod +x /etc/profile.d/opencode.sh
+ENV PATH="/home/node/.opencode/bin:$PATH"
 
-# Default shell
-CMD ["/bin/bash"]
+RUN mkdir -p /home/node/.local/share/opencode \
+    && chown -R node:node /home/node/.local
+
+USER node
