@@ -33,4 +33,15 @@ fi
 
 echo "==> Engine ready after $((ATTEMPT / 2)) seconds."
 
+echo "==> Adjusting permissions for OpenKanban worktrees..."
+
+# Resolve current workspace path dynamically
+CURRENT_WORKSPACE=$(pwd)
+
+# Grant Git trust for this specific path
+git config --global --add safe.directory "$CURRENT_WORKSPACE"
+
+# Ensure the parent /workspaces is writable for worktree creation
+sudo chmod 777 /workspaces
+
 echo "==> Setup Complete!"
