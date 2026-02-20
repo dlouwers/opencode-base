@@ -32,4 +32,9 @@ USER root
 RUN echo 'export PATH=/home/node/.opencode/bin:$PATH' > /etc/profile.d/opencode.sh \
     && chmod +x /etc/profile.d/opencode.sh
 ENV PATH="/home/node/.opencode/bin:$PATH"
+
+# 5. Create opencode data directories (mounts target subdirs, so parent must exist)
+RUN mkdir -p /home/node/.local/share/opencode \
+    && chown -R node:node /home/node/.local
+
 USER node

@@ -4,7 +4,11 @@
 PATHS=(
     "$HOME/.config/openkanban"
     "$HOME/.config/opencode"
-    "$HOME/.local/share/opencode"
+    # Mount opencode data directories individually (NOT bin/) to avoid Linux/macOS binary conflicts
+    "$HOME/.local/share/opencode/storage"
+    "$HOME/.local/share/opencode/snapshot"
+    "$HOME/.local/share/opencode/tool-output"
+    "$HOME/.local/share/opencode/log"
     "$HOME/.local/state/opencode"
     "$HOME/.kanban-worktrees"
 )

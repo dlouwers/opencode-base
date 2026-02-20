@@ -6,7 +6,12 @@
   "mounts": [
     "source=${localEnv:HOME}/.config/openkanban,target=/home/node/.config/openkanban,type=bind",
     "source=${localEnv:HOME}/.config/opencode,target=/home/node/.config/opencode,type=bind",
-    "source=${localEnv:HOME}/.local/share/opencode,target=/home/node/.local/share/opencode,type=bind",
+    // Mount opencode data individually to avoid bin/ conflicts (Linux vs macOS binaries)
+    "source=${localEnv:HOME}/.local/share/opencode/auth.json,target=/home/node/.local/share/opencode/auth.json,type=bind",
+    "source=${localEnv:HOME}/.local/share/opencode/storage,target=/home/node/.local/share/opencode/storage,type=bind",
+    "source=${localEnv:HOME}/.local/share/opencode/snapshot,target=/home/node/.local/share/opencode/snapshot,type=bind",
+    "source=${localEnv:HOME}/.local/share/opencode/tool-output,target=/home/node/.local/share/opencode/tool-output,type=bind",
+    "source=${localEnv:HOME}/.local/share/opencode/log,target=/home/node/.local/share/opencode/log,type=bind",
     "source=${localEnv:HOME}/.local/state/opencode,target=/home/node/.local/state/opencode,type=bind",
     "source=${localEnv:HOME}/.kanban-worktrees,target=/worktrees,type=bind,consistency=cached"
   ],
