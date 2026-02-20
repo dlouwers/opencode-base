@@ -10,12 +10,29 @@ echo "=========================================="
 echo ""
 
 EXIT_CODE=0
+IS_WORKTREE=false
 
 # Color codes for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
+
+WORKSPACE_NAME=$(ls /workspaces 2>/dev/null | grep -v worktrees | head -1)
+if [ -n "$WORKSPACE_NAME" ]; then
+    GIT_FILE="/workspaces/$WORKSPACE_NAME/.git"
+    if [ -f "$GIT_FILE" ] && grep -q "gitdir:" "$GIT_FILE" 2>/dev/null; then
+        IS_WORKTREE=true
+    fi
+fi
+
+if [ "$IS_WORKTREE" = true ]; then
+    echo -e "${YELLOW}NOTE: Running inside a git worktree.${NC}"
+    echo "The devcontainer is designed to be opened from the main repo."
+    echo "Worktree context will cause git and engine warnings — this is expected."
+    echo "To test fully, open the main repo in VS Code and Reopen in Container."
+    echo ""
+fi
 
 test_pass() {
     echo -e "${GREEN}✓${NC} $1"
@@ -158,8 +175,10 @@ if ps aux | grep -v grep | grep -q "opencode serve"; then
     else
         test_warn "OpenCode engine process running but not responding on port 4096"
     fi
+elif [ "$IS_WORKTREE" = true ]; then
+    test_warn "OpenCode engine not running (expected in worktree context — no main .git)"
 else
-    test_warn "OpenCode engine is NOT running (post-start.sh should start it)"
+    test_fail "OpenCode engine is NOT running"
 fi
 
 echo ""
@@ -176,10 +195,12 @@ if [ -n "$WORKSPACE_NAME" ]; then
         test_warn "Workspace NOT marked as git safe.directory (post-start.sh may fix this)"
     fi
     
-    if git rev-parse --git-dir >/dev/null 2>&1; then
+    if git -C "/workspaces/$WORKSPACE_NAME" rev-parse --git-dir >/dev/null 2>&1; then
         test_pass "Git repository is accessible"
+    elif [ "$IS_WORKTREE" = true ]; then
+        test_warn "Git not accessible (expected in worktree context — main .git not mounted)"
     else
-        test_warn "Git repository not accessible in current directory"
+        test_fail "Git repository not accessible"
     fi
 else
     test_warn "No workspace found in /workspaces"

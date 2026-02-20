@@ -1,8 +1,14 @@
 # Testing Guide: Published DevContainer Image
 
-## Overview
+## Important: Open from Main Repo
 
-This project now uses the published image `dlouwers/opencode-base:latest` instead of building from the local Dockerfile. This guide explains how to verify the setup works correctly.
+The devcontainer **must be opened from the main repository**, not from a worktree.
+
+Git worktrees contain a `.git` file that points back to the main repo's `.git/worktrees/` directory. When VS Code opens a devcontainer from a worktree, that pointer resolves to a path that doesn't exist inside the container (the main repo isn't mounted). This breaks git operations and the OpenCode engine.
+
+**Correct**: Open the main repo folder in VS Code → Reopen in Container → access worktrees via `/worktrees`
+
+**Wrong**: Open a worktree folder directly in VS Code → Reopen in Container
 
 ## Automated Verification
 
@@ -19,6 +25,8 @@ This tests:
 - Configuration files
 - OpenCode engine
 - Git configuration
+
+The script detects worktree context and adjusts expectations accordingly.
 
 ## Manual Testing Steps
 
