@@ -6,6 +6,8 @@
   "mounts": [
     "source=${localEnv:HOME}/.config/openkanban,target=/home/node/.config/openkanban,type=bind",
     "source=${localEnv:HOME}/.config/opencode,target=/home/node/.config/opencode,type=bind",
+    "source=${localEnv:HOME}/.local/share/opencode,target=/home/node/.local/share/opencode,type=bind",
+    "source=${localEnv:HOME}/.local/state/opencode,target=/home/node/.local/state/opencode,type=bind",
     "source=${localEnv:HOME}/.kanban-worktrees,target=/worktrees,type=bind,consistency=cached"
   ],
   "postStartCommand": "bash .devcontainer/post-start.sh",

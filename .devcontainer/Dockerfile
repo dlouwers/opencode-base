@@ -25,3 +25,11 @@ RUN npm install -g oh-my-opencode
 # 3. Switch to the built-in non-root user to install OpenCode
 USER node
 RUN curl -fsSL https://opencode.ai/install | bash
+
+# 4. Fix PATH for non-interactive shells (opencode installer only adds to .bashrc
+#    after the interactive guard, making it unreachable for scripts/docker exec)
+USER root
+RUN echo 'export PATH=/home/node/.opencode/bin:$PATH' > /etc/profile.d/opencode.sh \
+    && chmod +x /etc/profile.d/opencode.sh
+ENV PATH="/home/node/.opencode/bin:$PATH"
+USER node

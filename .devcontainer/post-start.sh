@@ -3,6 +3,8 @@
 # We REMOVE 'set -e' here so the container doesn't crash 
 # if a single non-critical command (like prune) fails.
 
+export PATH=/home/node/.opencode/bin:$PATH
+
 echo "==> Configuring OpenKanban..."
 # Ensure the directory exists before writing the file
 mkdir -p ~/.config/openkanban
