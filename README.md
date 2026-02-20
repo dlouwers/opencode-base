@@ -348,6 +348,35 @@ In Vibe Kanban UI:
 
 ## Development
 
+### Opening the Workspace
+
+This project includes a `kanban-dev.code-workspace` file for multi-folder workspace support. It provides quick access to:
+- **Main Project**: The repository root
+- **Active Worktrees**: OpenKanban task branches at `/worktrees`
+
+#### Expected Warning on Host
+
+When opening `kanban-dev.code-workspace` on your host machine, VS Code will show a warning:
+
+```
+The workspace file references a path '/worktrees' that does not exist.
+The devcontainer might fail to start.
+```
+
+**This warning is expected and harmless.** Here's why:
+
+- The `/worktrees` folder only exists **inside** the devcontainer
+- It's mounted from `~/.kanban-worktrees` on your host when the container starts
+- VS Code validates paths before the container starts, hence the warning
+- Once the devcontainer opens, the path becomes available and works correctly
+
+**To use the workspace:**
+1. Open `kanban-dev.code-workspace` in VS Code (ignore the warning)
+2. When prompted, click "Reopen in Container"
+3. The `/worktrees` folder will be accessible once the container starts
+
+The workspace provides convenient sidebar access to all OpenKanban task branches, making it easy to review changes across multiple worktrees.
+
 ### Build Locally
 
 ```bash

@@ -1,6 +1,18 @@
 {
+  // Multi-folder workspace for OpenKanban development
+  // 
+  // NOTE: The "/worktrees" folder will show a warning when opened on the host.
+  // This is expected and harmless - the path becomes available once the devcontainer starts.
+  // The /worktrees folder is mounted from ~/.kanban-worktrees by the devcontainer.
+  // It provides quick access to all active OpenKanban task branches for reviewing changes.
   "folders": [
     { "name": "Main Project", "path": "." },
     { "name": "🌱 Active Worktrees", "path": "/worktrees" }
-  ]
+  ],
+  "settings": {
+    // Workspace-specific settings
+    "files.watcherExclude": {
+      "**/worktrees/**/.git/**": true
+    }
+  }
 }
