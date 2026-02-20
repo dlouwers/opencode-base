@@ -51,7 +51,9 @@ done
 # --- Worktree & Permission Setup ---
 echo "==> Preparing Worktree Sandbox..."
 
+# Fix permissions on /workspaces and /worktrees
 sudo chmod 777 /worktrees || true
+sudo chmod 755 /workspaces || true
 
 # Workaround: openkanban's worktree_base config is broken (dead code).
 # It hardcodes worktrees to {workspace}-worktrees. Symlink to our mount.
@@ -65,6 +67,7 @@ fi
 
 git config --global --add safe.directory "/workspaces/$WORKSPACE_NAME" || true
 git config --global --add safe.directory /worktrees || true
+git config --global --add safe.directory '*' || true
 
 if [ -d "/workspaces/$WORKSPACE_NAME/.git" ]; then
     echo "==> Pruning stale worktrees..."

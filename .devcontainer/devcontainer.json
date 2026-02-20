@@ -1,8 +1,6 @@
 {
   "name": "OpenCode Base Dev Container",
-  "build": {
-    "dockerfile": "../Dockerfile"
-  },
+  "image": "dlouwers/opencode-base:latest",
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
   "initializeCommand": "bash .devcontainer/initialize-host.sh",
   "mounts": [
